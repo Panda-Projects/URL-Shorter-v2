@@ -8,6 +8,7 @@ import {UserEntity} from "./user/models/user.entity";
 import {ConfigModule} from "@nestjs/config";
 import {RedirectModule} from "./redirect/redirect.module";
 import {RedirectEntity} from "./redirect/models/redirect.entity";
+import {RedirectClicksEntity} from "./redirect/models/redirectClicks.entity";
 
 @Module({
     imports: [
@@ -19,7 +20,7 @@ import {RedirectEntity} from "./redirect/models/redirect.entity";
             username: 'user',
             password: 'fred',
             database: 'testdb',
-            entities: [UserEntity, RedirectEntity],
+            entities: [UserEntity, RedirectEntity, RedirectClicksEntity],
             synchronize: true,
         }),
         UserModule,

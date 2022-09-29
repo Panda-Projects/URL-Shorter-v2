@@ -1,19 +1,16 @@
 import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
-export class RedirectEntity {
+export class RedirectClicksEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({unique: true})
-    code: string;
-
     @Column()
-    userId: number;
+    redirectId: number;
 
-    @Column()
-    redirect_url: string;
+    @Column({nullable: true})
+    ip: string;
 
     @CreateDateColumn()
-    date: Date;
+    clickedAt: Date;
 }

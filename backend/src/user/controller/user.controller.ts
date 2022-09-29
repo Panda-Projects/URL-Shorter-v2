@@ -6,10 +6,9 @@ import { CreateUserDto } from '../models/dto/CreateUser.dto';
 import { LoginUserDto } from '../models/dto/LoginUser.dto';
 import { UserI } from '../models/user.interface';
 import { UserService } from '../service/user.service';
-import {I18n, I18nContext} from "nestjs-i18n";
-import {Roles} from "../../auth/roles/roles.decorator";
-import {Role} from "../../auth/roles/role.enum";
 import {RolesGuard} from "../../auth/guards/roles.guard";
+import {Role} from "../../auth/roles/role.enum";
+import {Roles} from "../../auth/roles/roles.decorator";
 
 @Controller('user')
 export class UserController {
@@ -18,8 +17,8 @@ export class UserController {
 
   // Rest Call: POST http://localhost:8080/api/users/
   @Post('create')
-  create(@Body() createdUserDto: CreateUserDto, @I18n() i18n: I18nContext): Observable<UserI> {
-    return this.userService.create(createdUserDto, i18n);
+  create(@Body() createdUserDto: CreateUserDto): Observable<UserI> {
+    return this.userService.create(createdUserDto);
   }
 
   // Rest Call: POST http://localhost:8080/api/users/login
@@ -37,9 +36,18 @@ export class UserController {
     );
   }
 
+  @Get('validation')
+  @HttpCode(200)
+  validationJWT() {
+      return {
+        message: "JWT is valid"
+      }
+  }
+
   // Rest Call: GET http://localhost:8080/api/users/ 
   // Requires Valid JWT from Login Request
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Get()
   findAll(@Req() request): Observable<UserI[]> {
     return this.userService.findAll();

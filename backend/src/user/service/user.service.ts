@@ -8,7 +8,6 @@ import {CreateUserDto} from '../models/dto/CreateUser.dto';
 import {LoginUserDto} from '../models/dto/LoginUser.dto';
 import {UserEntity} from '../models/user.entity';
 import {UserI} from '../models/user.interface';
-import {I18nContext} from "nestjs-i18n";
 
 @Injectable()
 export class UserService {
@@ -19,7 +18,7 @@ export class UserService {
         private authService: AuthService
     ) {}
 
-    create(createdUserDto: CreateUserDto, i18n: I18nContext): Observable<UserI> {
+    create(createdUserDto: CreateUserDto): Observable<UserI> {
         const userEntity = this.userRepository.create(createdUserDto);
 
         return this.mailExists(userEntity.email).pipe(

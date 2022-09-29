@@ -1,9 +1,11 @@
 import type {NextPage} from 'next'
 import Sidebar from "../components/sidebar";
 import React from "react";
+import Map from '../components/map';
 
 
 const Home: NextPage = () => {
+
     return (
         <>
             <div className="relative min-h-screen md:flex" data-dev-hint="container">
@@ -22,12 +24,14 @@ const Home: NextPage = () => {
                                                     <div
                                                         className="bg-gradient-to-tr from-pink-500 to-pink-700 -mt-10 mb-4 rounded-xl text-white grid items-center w-24 h-24 py-4 px-4 justify-center shadow-lg-pink mb-0">
                                                         <span
-                                                            className="material-icons text-white text-3xl leading-none">trending_up</span>
+                                                            className="material-icons text-white text-3xl leading-none">link</span>
                                                     </div>
                                                     <div
                                                         className="w-full pl-4 max-w-full flex-grow flex-1 mb-2 text-right undefined">
-                                                        <h5 className="text-gray-500 dark:text-gray-300 font-light tracking-wide text-base mb-1">Traffic</h5>
-                                                        <span className="text-3xl text-gray-900 dark:text-gray-100">350,897</span></div>
+                                                        <h5 className="text-gray-500 dark:text-gray-300 font-light tracking-wide text-base mb-1">Redirects</h5>
+                                                        <span
+                                                            className="text-3xl text-gray-900 dark:text-gray-100">350,897</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -42,9 +46,10 @@ const Home: NextPage = () => {
                                                     </div>
                                                     <div
                                                         className="w-full pl-4 max-w-full flex-grow flex-1 mb-2 text-right undefined">
-                                                        <h5 className="text-gray-500 dark:text-gray-300 font-light tracking-wide text-base mb-1">New
-                                                            Users</h5><span
-                                                        className="text-3xl dark:text-gray-100 text-gray-900">2,356</span></div>
+                                                        <h5 className="text-gray-500 dark:text-gray-300 font-light tracking-wide text-base mb-1">Users</h5>
+                                                        <span
+                                                            className="text-3xl dark:text-gray-100 text-gray-900">2,356</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -55,12 +60,15 @@ const Home: NextPage = () => {
                                                     <div
                                                         className="bg-gradient-to-tr from-purple-500 to-purple-700 -mt-10 mb-4 rounded-xl text-white grid items-center w-24 h-24 py-4 px-4 justify-center shadow-lg-purple mb-0">
                                                         <span
-                                                            className="material-icons text-white text-3xl leading-none">paid</span>
+                                                            className="material-icons text-white text-3xl leading-none">ads_click</span>
                                                     </div>
                                                     <div
                                                         className="w-full pl-4 max-w-full flex-grow flex-1 mb-2 text-right undefined">
-                                                        <h5 className="text-gray-500 font-light dark:text-gray-300 tracking-wide text-base mb-1">Sales</h5>
-                                                        <span className="text-3xl dark:text-gray-100 text-gray-900">924</span></div>
+                                                        <h5 className="text-gray-500 font-light dark:text-gray-300 tracking-wide text-base mb-1">Totay
+                                                            Clicks</h5>
+                                                        <span
+                                                            className="text-3xl dark:text-gray-100 text-gray-900">924</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -75,10 +83,24 @@ const Home: NextPage = () => {
                                                     </div>
                                                     <div
                                                         className="w-full pl-4 max-w-full flex-grow flex-1 mb-2 text-right undefined">
-                                                        <h5 className="text-gray-500 dark:text-gray-300 font-light tracking-wide text-base mb-1">Performance</h5>
-                                                        <span className="text-3xl dark:text-gray-100 text-gray-900">49,65%</span></div>
+                                                        <h5 className="text-gray-500 dark:text-gray-300 font-light tracking-wide text-base mb-1">Total
+                                                            Clicks</h5>
+                                                        <span
+                                                            className="text-3xl dark:text-gray-100 text-gray-900">49,65%</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="container mx-auto max-w-full">
+                                <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2">
+                                    <div className="px-4 mb-10">
+                                        <div
+                                            className="w-full bg-white dark:bg-[#1a1c23] rounded-xl shadow-md p-4 undefined">
+                                            <h1>Last Clicks from Redirects</h1>
+                                            <Map />
                                         </div>
                                     </div>
                                 </div>
