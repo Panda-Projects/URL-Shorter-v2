@@ -13,7 +13,7 @@ export class RedirectController {
 
     @Get(":code")
     getUrlFromCode(@Req() req, @Param("code") code) {
-        return this.redirectService.findOneByCode(code, req.ip);
+        return this.redirectService.findOneByCode(code, req.headers["x-forwarded-for"]);
     }
 
     @Get()
