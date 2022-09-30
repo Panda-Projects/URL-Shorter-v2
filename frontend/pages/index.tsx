@@ -99,7 +99,7 @@ const Home: NextPage = () => {
                                     <div className="px-4 mb-10">
                                         <div
                                             className="w-full bg-white dark:bg-[#1a1c23] rounded-xl shadow-md p-4 undefined">
-                                            <h1>Last Clicks from Redirects</h1>
+                                            <h1 className="text-center text-xl font-bold my-2">Last Clicks from Redirects</h1>
                                             <Map />
                                         </div>
                                     </div>
