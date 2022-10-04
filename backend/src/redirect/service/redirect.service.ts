@@ -68,4 +68,33 @@ export class RedirectService {
     findAll() {
         return this.redirectEntityRepository.find();
     }
+
+    async getRedirectCount() {
+        return await this.redirectEntityRepository.count();
+    }
+
+    async getRedirectClicksCount() {
+        return await this.redirectClicksEntityRepository.count();
+    }
+
+    async getRedirectClicksTodayCount() {
+        return await this.redirectClicksEntityRepository.find().then(value => {
+            return value.filter(value1 => {
+                const clickedDate = new Date(value1.clickedAt);
+                const dateNow = new Date();
+
+                return dateNow.getDay() === clickedDate.getDay() && dateNow.getMonth() === clickedDate.getMonth() && clickedDate.getFullYear() === dateNow.getFullYear();
+            }).length
+        });
+    }
+
+    async getLast10Clicks() {
+        return await this.redirectClicksEntityRepository.find({select: ["clickedAt", "ip", "redirectId"]}).then(value => {
+            const list = value.sort((a, b) => b.clickedAt.getDate() - a.clickedAt.getDate())
+            if(list.length >= 10) {
+                list.length = 10;
+            }
+            return list;
+        })
+    }
 }

@@ -1,6 +1,5 @@
 import type {NextPage} from 'next'
-import Head from 'next/head'
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, FormEventHandler, useEffect, useState} from "react";
 import {setCookie, getCookie} from "cookies-next";
 import Router from "next/router";
 
@@ -17,7 +16,9 @@ const Login: NextPage = () => {
         }
     })
 
-    const login = () => {
+    // @ts-ignore
+    const login = (event) => {
+        event.preventDefault()
         if (loginData.email && loginData.password) {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
@@ -73,43 +74,44 @@ const Login: NextPage = () => {
                                 />
                             </div>
                             <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-                                <div className="w-full">
-                                    <h1
-                                        className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200"
-                                    >
-                                        Login
-                                    </h1>
-                                    {alert}
-                                    <label className="block text-sm">
-                                        <span className="text-gray-700 dark:text-gray-400">Email</span>
-                                        <input
-                                            className="block w-full rounded mt-1 p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                            placeholder="Jane Doe"
-                                            name="email"
-                                            value={loginData.email}
-                                            onChange={event => handleChange(event)}
-                                        />
-                                    </label>
-                                    <label className="block mt-4 text-sm">
-                                        <span className="text-gray-700 dark:text-gray-400">Password</span>
-                                        <input
-                                            className="block w-full mt-1 rounded p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                            placeholder="***************"
-                                            type="password"
-                                            value={loginData.password}
-                                            onChange={(event) => handleChange(event)}
-                                            name="password"
-                                        />
-                                    </label>
+                                <form className="w-full" onSubmit={login}>
+                                    <div className="w-full">
+                                        <h1
+                                            className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200"
+                                        >
+                                            Login
+                                        </h1>
+                                        {alert}
+                                        <label className="block text-sm">
+                                            <span className="text-gray-700 dark:text-gray-400">Email</span>
+                                            <input
+                                                className="block w-full rounded mt-1 p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                                placeholder="Jane Doe"
+                                                name="email"
+                                                value={loginData.email}
+                                                onChange={event => handleChange(event)}
+                                            />
+                                        </label>
+                                        <label className="block mt-4 text-sm">
+                                            <span className="text-gray-700 dark:text-gray-400">Password</span>
+                                            <input
+                                                className="block w-full mt-1 rounded p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                                placeholder="***************"
+                                                type="password"
+                                                value={loginData.password}
+                                                onChange={(event) => handleChange(event)}
+                                                name="password"
+                                            />
+                                        </label>
 
-                                    <button
-                                        onClick={() => login()}
-                                        className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-[rgb(108,43,217)] border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-                                        type="submit"
-                                    >
-                                        Log in
-                                    </button>
-                                </div>
+                                        <button
+                                            className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-[rgb(108,43,217)] border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                                            type="submit"
+                                        >
+                                            Log in
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

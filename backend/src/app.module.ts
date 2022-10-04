@@ -9,6 +9,8 @@ import {ConfigModule} from "@nestjs/config";
 import {RedirectModule} from "./redirect/redirect.module";
 import {RedirectEntity} from "./redirect/models/redirect.entity";
 import {RedirectClicksEntity} from "./redirect/models/redirectClicks.entity";
+import {AnalyticsService} from "./analytics/service/analytics.service";
+import {AnalyticsModule} from "./analytics/analytics.module";
 
 @Module({
     imports: [
@@ -26,6 +28,7 @@ import {RedirectClicksEntity} from "./redirect/models/redirectClicks.entity";
         UserModule,
         AuthModule,
         RedirectModule,
+        AnalyticsModule
     ],
     controllers: [AppController],
     providers: [AppService],

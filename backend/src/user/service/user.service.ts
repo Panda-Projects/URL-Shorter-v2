@@ -1,6 +1,6 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {from, Observable} from 'rxjs';
+import {count, from, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {AuthService} from 'src/auth/service/auth.service';
 import {Repository} from 'typeorm';
@@ -72,6 +72,10 @@ export class UserService {
 
     findOne(id: number): Observable<UserI> {
         return from(this.userRepository.findOne({where: { id: id}}));
+    }
+
+    async getUserCount() {
+        return await this.userRepository.count();
     }
 
     findOneRepository(userId: number): Promise<UserEntity | null> {

@@ -37,6 +37,7 @@ export class UserController {
   }
 
   @Get('validation')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(200)
   validationJWT() {
       return {

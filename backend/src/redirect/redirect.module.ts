@@ -12,6 +12,7 @@ import {RedirectClicksEntity} from "./models/redirectClicks.entity";
     UserModule
   ],
   providers: [RedirectService],
-  controllers: [RedirectController]
+  controllers: [RedirectController],
+  exports: [RedirectService]
 })
 export class RedirectModule {}
