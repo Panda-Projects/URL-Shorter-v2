@@ -1,11 +1,23 @@
-import { Body, Controller, Get, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CreateUserDto } from '../models/dto/CreateUser.dto';
-import { LoginUserDto } from '../models/dto/LoginUser.dto';
-import { UserI } from '../models/user.interface';
-import { UserService } from '../service/user.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {JwtAuthGuard} from 'src/auth/guards/jwt-auth.guard';
+import {CreateUserDto} from '../models/dto/CreateUser.dto';
+import {LoginUserDto} from '../models/dto/LoginUser.dto';
+import {UserI} from '../models/user.interface';
+import {UserService} from '../service/user.service';
 import {RolesGuard} from "../../auth/guards/roles.guard";
 import {Role} from "../../auth/roles/role.enum";
 import {Roles} from "../../auth/roles/roles.decorator";
@@ -36,13 +48,33 @@ export class UserController {
     );
   }
 
+  @Delete(':userId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HttpCode(200)
+  @Roles(Role.ADMIN)
+  async deleteUser(@Req() req, @Param("userId") userId) {
+    if(req.user.id == userId) throw new HttpException("You can't delete your self", HttpStatus.BAD_REQUEST)
+    return await this.userService.deleteUser(userId);
+  }
+
+  @Post("active/:userId")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HttpCode(200)
+  @Roles(Role.ADMIN)
+  async activeUser(@Param("userId") userId) {
+    return await this.userService.activeUser(userId);
+  }
+
   @Get('validation')
   @UseGuards(JwtAuthGuard)
   @HttpCode(200)
-  validationJWT() {
-      return {
-        message: "JWT is valid"
-      }
+  async validationJWT(@Req() req) {
+    const userDatabase = await this.userService.findOneRepository(req.user.id).then(value => value);
+    if(userDatabase === null) throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+    return {
+      message: "JWT is valid",
+      role: await this.userService.findOneRepository(req.user.id).then(value => value.role)
+    }
   }
 
   // Rest Call: GET http://localhost:8080/api/users/ 

@@ -3,6 +3,8 @@ import Sidebar from "../components/sidebar";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {getCookie, removeCookies} from "cookies-next";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 const User: NextPage = () => {
     const router = useRouter()
@@ -15,6 +17,8 @@ const User: NextPage = () => {
             role: "admin"
         }
     ]);
+    const [role, setRole] = useState("")
+    const MySwal = withReactContent(Swal)
 
     const headers = new Headers()
     headers.append("Authorization", "Bearer " + getCookie("IHpKXQWXjx") as string)
@@ -23,17 +27,82 @@ const User: NextPage = () => {
         fetch("/api/user/validation", {
             headers: headers,
             method: "GET",
-        }).then(value => {
+        }).then(async value => {
             if (value.status === 200) {
-                fetch("/api/user", {
-                    headers: headers,
-                    method: "GET"
-                }).then(value => value.json()).then(value => setUsers(value))
+                value.json().then(async value1 => {
+                    setRole(value1.role)
+                    if (value1.role.toLowerCase() === "admin") {
+                        await updateUser();
+                    } else {
+                        await router.push("/")
+                    }
+                })
             } else {
-                router.push("/logout")
+                await router.push("/logout")
             }
         })
     }, [])
+
+    async function updateUser() {
+        fetch("/api/user", {
+            headers: headers,
+            method: "GET"
+        }).then(value => value.json()).then(value => setUsers(value))
+    }
+
+    async function activeUser(userId: number) {
+        await fetch("/api/user/active/" + userId, {
+            method: "POST",
+            headers: headers
+        }).then(value => {
+            if (value.status === 200) {
+                updateUser();
+            }
+        })
+    }
+
+    async function onDelete(userId: number) {
+        MySwal.fire({
+            icon: "question",
+            cancelButtonColor: "#d71a1a",
+            showCancelButton: true,
+            cancelButtonText: "No, don't delete",
+            confirmButtonText: "Yes, delete",
+            title: "Do you want to delete the user?",
+            confirmButtonColor: "#51971c",
+            customClass: {
+                popup: "dark:bg-[#1a1c23] bg-gray-50",
+                title: "dark:text-white text-black"
+            }
+        }).then(async value => {
+            if (value.isConfirmed) {
+                if (role === "admin") {
+                    await fetch("/api/user/" + userId, {
+                        method: "DELETE",
+                        headers: headers,
+                    }).then(value => {
+                        value.json().then((value1) => {
+                            if (value.status === 200) updateUser();
+                            MySwal.fire({
+                                toast: true,
+                                position: "top-end",
+                                timer: 3000,
+                                title: value1.message,
+                                timerProgressBar: true,
+                                customClass: {
+                                    popup: "dark:bg-[#1a1c23] bg-gray-50",
+                                    title: "dark:text-white text-black",
+                                },
+                                icon: value.status === 200 ? "success" : "error",
+                                showCancelButton: false,
+                                showConfirmButton: false,
+                            })
+                        })
+                    })
+                }
+            }
+        })
+    }
 
     return (
         <>
@@ -49,7 +118,7 @@ const User: NextPage = () => {
                                         return (
                                             <>
                                                 <div
-                                                    className="p-4 text-gray-500 uppercase bg-gray-50 dark:text-gray-400 dark:bg-[#1a1c23]">
+                                                    className="p-4 text-gray-500 my-3 rounded-xl bg-gray-50 dark:text-gray-400 dark:bg-[#1a1c23]">
                                                     <table className="w-full">
                                                         <tbody>
                                                         <tr>
@@ -61,12 +130,13 @@ const User: NextPage = () => {
                                                                     alt="Office"
                                                                 />
                                                             </td>
-                                                            <td className="font-bold">{value.username}</td>
-                                                            <td className="text-center">{value.role}</td>
+                                                            <td className="font-bold w-50">{value.username}</td>
+                                                            <td className="text-center uppercase w-20">{value.role}</td>
                                                             <td>
                                                                 {value.status === "0" ?
                                                                     <>
                                                                         <button
+                                                                            onClick={() => onDelete(value.id)}
                                                                             className="bg-red-500 rounded-2xl p-1 float-right mx-3 inline-block">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                  className="w-5 p-0.5 h-5 fill-white"
@@ -77,6 +147,7 @@ const User: NextPage = () => {
                                                                             </svg>
                                                                         </button>
                                                                         <button
+                                                                            onClick={() => activeUser(value.id)}
                                                                             className="bg-green-500 rounded-2xl p-1 float-right mx-3 inline-block">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                  className="w-5 p-0.5 h-5 fill-white"
@@ -90,6 +161,7 @@ const User: NextPage = () => {
                                                                     :
                                                                     <>
                                                                         <button
+                                                                            onClick={() => onDelete(value.id)}
                                                                             className="bg-red-500 rounded-2xl p-1 float-right mx-3 inline-block">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                  className="w-5 p-0.5 h-5 fill-white"

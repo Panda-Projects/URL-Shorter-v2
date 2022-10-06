@@ -1,6 +1,6 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {HttpCode, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {count, from, Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {AuthService} from 'src/auth/service/auth.service';
 import {Repository} from 'typeorm';
@@ -8,6 +8,7 @@ import {CreateUserDto} from '../models/dto/CreateUser.dto';
 import {LoginUserDto} from '../models/dto/LoginUser.dto';
 import {UserEntity} from '../models/user.entity';
 import {UserI} from '../models/user.interface';
+import {Role} from "../../auth/roles/role.enum";
 
 @Injectable()
 export class UserService {
@@ -28,6 +29,12 @@ export class UserService {
                         switchMap((passwordHash: string) => {
                             // Overwrite the user password with the hash, to store it in the db
                             userEntity.password = passwordHash;
+                            this.userRepository.count().then(value => {
+                                if(value === 0) {
+                                    userEntity.status = "1";
+                                    userEntity.role = Role.ADMIN;
+                                }
+                            })
                             return from(this.userRepository.save(userEntity)).pipe(
                                 map((savedUser: UserI) => {
                                     const {password, ...user} = savedUser;
@@ -47,6 +54,7 @@ export class UserService {
         return this.findUserByEmail(loginUserDto.email.toLowerCase()).pipe(
             switchMap((user: UserI) => {
                     if (user) {
+                        if(user.status === "0") throw new HttpException("User isn't active", HttpStatus.CONFLICT)
                         return this.validatePassword(loginUserDto.password, user.password).pipe(
                             switchMap((passwordsMatches: boolean) => {
                                 if (passwordsMatches) {
@@ -103,4 +111,26 @@ export class UserService {
         }
     }
 
+    async deleteUser(userId) {
+        return this.userRepository.delete({id: userId}).catch(reason => {
+            throw new HttpException("", HttpStatus.BAD_REQUEST)
+        }).then(value => {
+            return {
+                message: "User delete success"
+            }
+        })
+    }
+
+    async activeUser(userId) {
+        return this.findOneRepository(userId).then(user => {
+            user.status = "1";
+            return this.userRepository.save(user).then(() => {
+                return {
+                    message: "User is now active"
+                }
+            }).catch((error) => {
+                throw new HttpException("User could not be activated", HttpStatus.CONFLICT)
+            })
+        })
+    }
 }
