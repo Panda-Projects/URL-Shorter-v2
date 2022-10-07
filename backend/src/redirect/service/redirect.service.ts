@@ -4,6 +4,7 @@ import {Repository} from "typeorm";
 import {RedirectEntity} from "../models/redirect.entity";
 import {RedirectDto} from "../models/dto/redirect.dto";
 import {RedirectClicksEntity} from "../models/redirectClicks.entity";
+import {UserService} from "../../user/service/user.service";
 
 @Injectable()
 export class RedirectService {
@@ -12,6 +13,7 @@ export class RedirectService {
         private redirectEntityRepository: Repository<RedirectEntity>,
         @InjectRepository(RedirectClicksEntity)
         private redirectClicksEntityRepository: Repository<RedirectClicksEntity>,
+        private userService: UserService
     ) {
     }
 
@@ -39,8 +41,7 @@ export class RedirectService {
     }
 
     async deleteCode(code: string) {
-        const redirectEntity: RedirectEntity = await this.redirectEntityRepository.findOne({where: {code: code}});
-        return this.redirectEntityRepository.remove(redirectEntity)
+        return await this.redirectEntityRepository.delete({id: parseInt(code)})
             .then(() => {
                 return {
                     message: "Code is deleted"
@@ -66,7 +67,12 @@ export class RedirectService {
     }
 
     findAll() {
-        return this.redirectEntityRepository.find();
+        return this.redirectEntityRepository.find().then(value => {
+            return Promise.all(value.map(async value1 => {
+                const dbUser = await this.userService.findOneRepository(value1.userId);
+                return {...value1, username: dbUser !== null ? dbUser.username : "Deleted"}
+            }))
+        });
     }
 
     async getRedirectCount() {

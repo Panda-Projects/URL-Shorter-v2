@@ -24,7 +24,7 @@ const Home: NextPage = () => {
             method: "GET",
         }).then(value => {
             if (value.status === 200) {
-                fetch("/api/analytics", {
+                fetch("/api/information", {
                     headers: headers,
                     method: "GET"
                 }).then(value => value.json()).then(value => setAnalytics(value))
