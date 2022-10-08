@@ -125,7 +125,7 @@ const User: NextPage = () => {
                                                             <td className="w-12">
                                                                 <img
                                                                     aria-hidden="true"
-                                                                    className="hidden w-7 h-7 rounded-2xl object-cover w-full h-full dark:block"
+                                                                    className="hidden w-7 h-7 rounded-full object-cover w-full h-full dark:block"
                                                                     src="/profil-dark.png"
                                                                     alt="Office"
                                                                 />

@@ -12,7 +12,12 @@ const Home: NextPage = () => {
         totaluser: 0,
         redirects: 0,
         redirectsClicks: 0,
-        redirectsClicksToday: 0
+        redirectsClicksToday: 0,
+        last10clicks: [{
+            lat: "0",
+            lon: "0",
+            city: "local"
+        }]
     });
 
     const headers = new Headers()
@@ -148,7 +153,7 @@ const Home: NextPage = () => {
                                             className="w-full bg-white dark:bg-[#1a1c23] rounded-xl shadow-md p-4 undefined">
                                             <h1 className="text-center text-xl font-bold my-2">Last Clicks from
                                                 Redirects</h1>
-                                            <Map/>
+                                            <Map last10clicks={analytics.last10clicks}/>
                                         </div>
                                     </div>
                                 </div>

@@ -11,6 +11,15 @@ export class RedirectClicksEntity {
     @Column({nullable: true})
     ip: string;
 
+    @Column({default: 0})
+    lat: string
+
+    @Column({default: 0})
+    lon: string
+
+    @Column({default: "local"})
+    city: string
+
     @CreateDateColumn()
     clickedAt: Date;
 }

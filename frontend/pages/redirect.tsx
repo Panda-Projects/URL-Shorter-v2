@@ -107,7 +107,8 @@ const Redirect: NextPage = () => {
                                             const createDate = new Date(value.date);
                                             return (
                                                 <>
-                                                    <div className="px-4 mb-10">
+                                                    <div className="px-4 mb-10" onClick={() => navigator.clipboard.writeText(window.location.protocol +
+                                                        "://" + window.location.hostname + "/" + value.code)}>
                                                         <div
                                                             className="w-full bg-white dark:bg-[#1a1c23] rounded-xl shadow-md undefined relative lg:h-[500px] h-[300px]"
                                                             style={{

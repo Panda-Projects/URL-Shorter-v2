@@ -18,9 +18,27 @@ export class RedirectService {
     }
 
     findOneByCode(code: string, ip: string) {
-        return this.redirectEntityRepository.findOne({where: {code: code}}).then(value => {
+        return this.redirectEntityRepository.findOne({where: {code: code}}).then(async value => {
             if (value === null) throw new HttpException("Code not found", HttpStatus.NOT_FOUND)
-            const redirectClicks: RedirectClicksEntity = this.redirectClicksEntityRepository.create({ip: ip, redirectId: value.id});
+            const ipDB = await fetch("http://ip-api.com/json/" + ip).then(value1 => value1.json()).then(value1 => {
+                if (value1.status === "fail") {
+                    return {
+                        lat: 0,
+                        lon: 0,
+                        city: "local"
+                    }
+                }
+                return {
+                    lat: value1.lat,
+                    lon: value1.lon,
+                    city: value1.city
+                };
+            })
+            const redirectClicks: RedirectClicksEntity = this.redirectClicksEntityRepository.create({
+                ip: ip,
+                redirectId: value.id,
+                ...ipDB
+            });
             this.redirectClicksEntityRepository.save(redirectClicks);
             return {
                 url: value.redirect_url
@@ -58,7 +76,7 @@ export class RedirectService {
 
     async showCodeInfo(code: string) {
         return await this.redirectEntityRepository.findOne({where: {code: code}}).then(value => {
-            if(value !== null) {
+            if (value !== null) {
                 return value
             } else {
                 throw new HttpException("Code not found", HttpStatus.NOT_FOUND)
@@ -95,9 +113,9 @@ export class RedirectService {
     }
 
     async getLast10Clicks() {
-        return await this.redirectClicksEntityRepository.find({select: ["clickedAt", "ip", "redirectId"]}).then(value => {
+        return await this.redirectClicksEntityRepository.find({select: ["clickedAt", "ip", "redirectId", "lat", "lon", "city"]}).then(value => {
             const list = value.sort((a, b) => b.clickedAt.getDate() - a.clickedAt.getDate())
-            if(list.length >= 10) {
+            if (list.length >= 10) {
                 list.length = 10;
             }
             return list;

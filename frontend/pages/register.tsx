@@ -4,8 +4,10 @@ import {setCookie, getCookie} from "cookies-next";
 import Router from "next/router";
 
 const Login: NextPage = () => {
-    const [loginData, setLoginData] = useState({
+    const [registerData, setRegisterData] = useState({
+        username: "",
         email: "",
+        password_confirm: "",
         password: "",
     })
     const [alert, setAlert] = useState(<></>);
@@ -19,25 +21,25 @@ const Login: NextPage = () => {
     // @ts-ignore
     const login = (event) => {
         event.preventDefault()
-        if (loginData.email && loginData.password) {
+        if (registerData.email && registerData.password && registerData.username) {
+            if(registerData.password_confirm !== registerData.password) return;
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            fetch("/api/user/login", {
+            fetch("/api/user/create", {
                 method: "POST",
-                body: JSON.stringify(loginData),
+                body: JSON.stringify(registerData),
                 headers: myHeaders
             }).then(value => {
                 value.json().then(value1 => {
-                    if (value.status === 200) {
-                        setCookie('IHpKXQWXjx', value1.access_token);
-                        Router.push("/")
+                    if (value.status === 201) {
+                        Router.push("/login")
                     } else if (value.status === 401 || value.status === 404) {
                         setAlert(
                             <>
                                 <div
                                     className="bg-transparent border border-red-400 text-red-700 px-4 py-1 my-1 rounded relative"
                                     role="alert">
-                                    <span className="block sm:inline">The email or password are not correct</span>
+                                    <span className="block sm:inline">{value1.message}</span>
                                 </div>
                             </>
                         );
@@ -48,7 +50,7 @@ const Login: NextPage = () => {
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setLoginData(prevState => ({...prevState, [e.target.name]: e.target.value}))
+        setRegisterData(prevState => ({...prevState, [e.target.name]: e.target.value}))
     }
 
     return (
@@ -79,16 +81,26 @@ const Login: NextPage = () => {
                                         <h1
                                             className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200"
                                         >
-                                            Login
+                                            Create first user
                                         </h1>
                                         {alert}
+                                        <label className="block text-sm">
+                                            <span className="text-gray-700 dark:text-gray-400">Username</span>
+                                            <input
+                                                className="block w-full rounded mt-1 p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                                placeholder="Jane Doe"
+                                                name="username"
+                                                onChange={event => handleChange(event)}
+                                                required={true}
+                                            />
+                                        </label>
                                         <label className="block text-sm">
                                             <span className="text-gray-700 dark:text-gray-400">Email</span>
                                             <input
                                                 className="block w-full rounded mt-1 p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                                placeholder="Jane Doe"
+                                                placeholder="email@example.com"
+                                                type="email"
                                                 name="email"
-                                                value={loginData.email}
                                                 onChange={event => handleChange(event)}
                                                 required={true}
                                             />
@@ -96,21 +108,37 @@ const Login: NextPage = () => {
                                         <label className="block mt-4 text-sm">
                                             <span className="text-gray-700 dark:text-gray-400">Password</span>
                                             <input
-                                                className="block w-full mt-1 rounded p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                                className="block w-full rounded mt-1 p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                                                 placeholder="***************"
                                                 type="password"
-                                                value={loginData.password}
-                                                onChange={(event) => handleChange(event)}
                                                 name="password"
+                                                onChange={event => handleChange(event)}
+                                                required={true}
+                                            />
+                                        </label>
+                                        <label className="block mt-4 text-sm">
+                <span className="text-gray-700 dark:text-gray-400">
+                  Confirm password
+                </span>
+                                            <input
+                                                className="block w-full rounded mt-1 p-2 text-sm dark:border-[rgb(76,79,82)] dark:bg-[rgb(36,38,45)] focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                                placeholder="***************"
+                                                type="password"
+                                                name="password_confirm"
+                                                onChange={event => handleChange(event)}
                                                 required={true}
                                             />
                                         </label>
 
+                                        <div className="flex mt-6 text-sm">
+
+                                        </div>
+
                                         <button
-                                            className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-[rgb(108,43,217)] border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                                            className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
                                             type="submit"
                                         >
-                                            Log in
+                                            Create account
                                         </button>
                                     </div>
                                 </form>
@@ -119,9 +147,6 @@ const Login: NextPage = () => {
                     </div>
                 </div>
             </main>
-
-            <footer>
-            </footer>
         </div>
     )
 }

@@ -36,7 +36,7 @@ export class RedirectController {
 
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
-    @Post(":code")
+    @Post()
     createCode(@Req() req, @Body() redirectDto: RedirectDto) {
         return this.redirectService.createCode(redirectDto, req.user.id);
     }

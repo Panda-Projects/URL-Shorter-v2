@@ -1,20 +1,51 @@
 version: '3.8'
 
 services:
-  db:
+  postgres:
     image: postgres:14.2-alpine
+    restart: always
     volumes:
       - postgres_data_storage:/var/lib/postgresql/data/
-    expose:
-      - 5432
-    ports:
-      - "5432:5432"
     environment:
-      - "POSTGRES_USER=user"
-      - "POSTGRES_PASSWORD=fred"
-      - "POSTGRES_DB=testdb"
+      - "POSTGRES_USER=urlShorter"
+      - "POSTGRES_PASSWORD=urlShorter"
+      - "POSTGRES_DB=urlShorter"
     networks:
       - default
+
+  api:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    restart: always
+    environment:
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=urlShorter
+      - DB_PW=urlShorter
+      - JWT_SECRET=7892369z8uhfikhdsjf7893zruhijkdnssvd987rzhujljkvdzuu3987zh
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    command: npm run start
+
+  next-app:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    restart: always
+    links:
+      - api:api
+    environment:
+      - API_URL=api
+    depends_on:
+      - api
+    ports:
+      - 3000:3000
 
 volumes:
   postgres_data_storage:
