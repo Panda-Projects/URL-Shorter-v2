@@ -10,6 +10,7 @@ const Redirect: NextPage = () => {
     const router = useRouter()
     const [role, setRole] = useState("")
     const MySwal = withReactContent(Swal)
+    const [code, setCode] = useState("");
     const [redirects, setRedirects] = useState([
         {
             id: 1,
@@ -99,24 +100,36 @@ const Redirect: NextPage = () => {
                     <div className="max-w-7xl mx-auto">
                         <div className="px-4 py-6 sm:px-0">
                             <h2 className="my-6 text-2xl font-bold text-gray-700 dark:text-gray-200">Redirect</h2>
+                            <button className="bg-violet-800 hover:bg-violet-900 p-2 rounded-xl float-right">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     className="dark:fill-white w-4 mx-2 inline-block"
+                                     stroke="currentFill"
+                                     viewBox="0 0 448 512">
+                                    <path
+                                        d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+                                </svg>
+                                Added new Redirect
+                            </button>
                             <div className="bg-light-blue-500 pt-14 pb-28 px-3 md:px-8 h-auto">
                                 <div className="container mx-auto max-w-full">
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
                                         {redirects.map(value => {
                                             if (value.redirect_url === "") return;
                                             const createDate = new Date(value.date);
                                             return (
                                                 <>
-                                                    <div className="px-4 mb-10" onClick={() => navigator.clipboard.writeText(window.location.protocol +
-                                                        "://" + window.location.hostname + "/" + value.code)}>
+                                                    <div className="px-4 mb-10"
+                                                         onClick={() => navigator.clipboard.writeText(window.location.protocol +
+                                                             "://" + window.location.hostname + "/" + value.code)}>
                                                         <div
-                                                            className="w-full bg-white dark:bg-[#1a1c23] rounded-xl shadow-md undefined relative lg:h-[500px] h-[300px]"
+                                                            className="w-full bg-white dark:bg-[#1a1c23] rounded-xl shadow-md undefined relative lg:h-[300px] h-[300px]"
                                                             style={{
                                                                 backgroundImage: "linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.77)), url('https://image.thum.io/get/" + value.redirect_url + "')",
                                                                 backgroundPosition: "center top",
                                                                 backgroundSize: "cover"
                                                             }}>
-                                                            <button onClick={() => onDelete(value.id)} className="absolute right-4 pt-4 w-[30px] fill-red-800 hover:fill-red-900">
+                                                            <button onClick={() => onDelete(value.id)}
+                                                                    className="absolute right-4 pt-4 w-[25px] fill-red-800 hover:fill-red-900">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                      stroke="currentFill"
                                                                      viewBox="0 0 448 512">
